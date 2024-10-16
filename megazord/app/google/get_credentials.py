@@ -39,10 +39,13 @@ def credentials(scopes=SCOPES) -> Credentials: # pylint: disable=W0102 dangerous
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials.json", scopes
-            )
-            creds = flow.run_local_server(port=0)
+            if os.path.exists("credentials.json"):
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    "credentials.json", scopes
+                )
+                creds = flow.run_local_server(port=0)
+            else:
+                raise FileNotFoundError("credentials.json not found.")
         # Save the credentials for the next run
         with open("token.json", "w", encoding="utf-8") as token:
             token.write(creds.to_json())

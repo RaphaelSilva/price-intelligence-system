@@ -16,6 +16,7 @@ Usage:
     Ensure that 'credentials-bot.json' file is present in the same directory as this script.
     The file should contain the service account credentials.
 """
+import os
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -23,6 +24,9 @@ scopes = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/drive'
 ]
+
+if not os.path.exists("credentials-bot.json"):
+    raise FileNotFoundError("credentials-bot.json not found.")
 
 credentials = Credentials.from_service_account_file(
     'credentials-bot.json',

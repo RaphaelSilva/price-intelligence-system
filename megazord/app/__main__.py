@@ -9,11 +9,10 @@ Functions:
 Usage:
     The script initializes Playwright in synchronous mode and calls the `run` function.
 """
-# import re
+import re
 from playwright.sync_api import Playwright, sync_playwright
 
 from app.google.sheet.add import add_promotion
-import re
 
 
 def run(pw: Playwright) -> None:  # pylint: disable=C0116

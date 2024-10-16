@@ -1,0 +1,13 @@
+[MASTER]
+max-line-length = 120
+disable=
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    R0903, # too-few-public-methods    
+    W1203, # logging-fstring-interpolation
+
+[test_*]
+disable=
+    W0613, # unused-argument
+    W0621, # redefined-outer-name

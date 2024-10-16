@@ -9,7 +9,7 @@ Usage:
 """
 import pandas as pd
 import gspread
-from source.google.get_credentials import credentials
+from app.google.get_credentials import credentials
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]

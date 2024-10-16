@@ -5,7 +5,7 @@
       "name": "Debugger: Module",
       "type": "debugpy",
       "request": "launch",
-      "module": "source",
+      "module": "app",
     }
   ]
 }

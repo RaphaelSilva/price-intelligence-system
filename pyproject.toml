@@ -1,0 +1,16 @@
+[project]
+name = "price-intelligence-system"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4>=4.12.3",
+    "pandas>=2.2.3",
+    "playwright>=1.48.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.3",
+]

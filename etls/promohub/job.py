@@ -10,19 +10,20 @@ Usage:
     The script initializes Playwright in synchronous mode and calls the `run` function.
 """
 import re
+
 from playwright.sync_api import Playwright, sync_playwright
 
-from app.google.sheet.add import add_promotion
+from core.google.sheet import add
 
 
 def run(pw: Playwright) -> None:  # pylint: disable=C0116
     browser = pw.chromium.launch(headless=False)
     context = browser.new_context()
     page = context.new_page()
-    page.goto("https://promohub.com.br/")    
+    page.goto("https://promohub.com.br/")
     page.wait_for_selector(".flex-row > div")
     itens = page.locator(".flex-row > div")
-    promos = []    
+    promos = []
     for item in itens.all():
         img = item.locator("img").get_attribute("src")
         title = item.locator("div.text-lg.font-light").inner_text()
@@ -41,7 +42,7 @@ def run(pw: Playwright) -> None:  # pylint: disable=C0116
             'ImageLink': img,
             'Date': '15/10/2024'
         })
-    add_promotion(promos)
+    add.lines(promos, "", "")
 
     # ---------------------
     context.close()
@@ -49,13 +50,5 @@ def run(pw: Playwright) -> None:  # pylint: disable=C0116
 
 
 if __name__ == "__main__":
-    # pylint: disable=line-too-long
-    # add_promotion([{'Source': 'rsn2',
-    #                'SourceKey': '/promocoes/236703/cerveja-hoegaarden-269ml-lata-8-unidades',
-    #                'Title': 'Cerveja Hoegaarden 269ml Lata 8 Unidades',
-    #                'Price': 'R$30,11',
-    #                'Link': 'https://www.magazinevoce.com.br/magazinegatry/cerveja-hoegaarden-269ml-lata-8-unidades/p/232270200/me/cvej/',
-    #                'ImageLink': 'https://cdn.gatry.com/gatry-static/promocao/imagem/ecea094a35131af5b6d01812da6f7ae0.png',
-    #                'Date': '15/10/2024'}])
     with sync_playwright() as playwright:
         run(playwright)

@@ -9,20 +9,13 @@ Usage:
 """
 import pandas as pd
 import gspread
-from core.google.get_credentials import credentials
-
-# If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-
-# The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = "11RRrpwKYwYOx8B8TrsTlCWmhDwU6fyE3uRpwZFvgm0M"
-SAMPLE_RANGE_NAME = "A1:E"
+from core.google.get_bot_credentials import credentials
 
 
-def add_promotion(records: list):
+def lines(records: list, sheet_key: str, sheet_name: str):
     """
-    Adds promotion records to a Google Sheet.
-    This function takes a list of promotion records, appends them to an existing
+    Adds records to a Google Sheet.
+    This function takes a list of records, appends them to an existing
     Google Sheet, and updates the sheet with the new data.
     Args:
         records (list): A list of dictionaries, where each dictionary represents
@@ -43,15 +36,14 @@ def add_promotion(records: list):
 
         gc = gspread.authorize(creds)
 
-        spreadsheet = gc.open_by_key(
-            "11RRrpwKYwYOx8B8TrsTlCWmhDwU6fyE3uRpwZFvgm0M")
+        spreadsheet = gc.open_by_key(sheet_key)
 
-        worksheet = spreadsheet.worksheet('Feed')
+        worksheet = spreadsheet.worksheet(sheet_name)
         updated_records = pd.DataFrame.from_records(records)
 
         # Update the Google Sheet with the modified DataFrame
         response = worksheet.append_rows(updated_records.values.tolist())
-        print(response)
-        print("Promotion added successfully!")
+        if response:
+            print(f"Records added to {sheet_name} sheet.")
     except gspread.exceptions.GSpreadException as err:
         print(err)

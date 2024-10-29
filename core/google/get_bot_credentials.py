@@ -1,47 +1,55 @@
+# pylint: disable=W0102 dangerous-default-value
 """
-This script updates Google Sheets using the gspread library and Google OAuth2 credentials.
+This module provides functionality to obtain Google Sheets API credentials
+using a service account JSON file. The credentials are used to authenticate
+and authorize access to Google Sheets and Google Drive APIs.
 
-Modules:
-    gspread: A Python API for Google Sheets.
-    google.oauth2.service_account: A module to handle service account credentials.
+Functions:
+    credentials(scopes: list = SCOPES) -> Credentials:
+        Obtains and returns Google Sheets API credentials using the specified
+        scopes. Raises a FileNotFoundError if the credentials file is not found.
 
 Constants:
-    scopes (list): A list of scopes required for accessing Google Sheets and Google Drive.
+    SCOPES (list): A list of OAuth 2.0 scopes for Google Sheets and Google Drive APIs.
 
-Variables:
-    credentials (Credentials): Service account credentials loaded from a JSON file.
-    gc (gspread.Client): An authorized gspread client using the provided credentials.
-
-Usage:
-    Ensure that 'credentials-bot.json' file is present in the same directory as this script.
-    The file should contain the service account credentials.
 """
 import os
 import gspread
+from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
 
 
-credentials_path = os.path.join(os.getcwd(), "credentials/gcp/price-intelligence-system.json")
+credential_path = os.path.join(os.getcwd(), "credentials/gcp/price-intelligence-system.json")
 
 
-scopes = [
+SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/drive'
 ]
 
-if not os.path.exists(credentials_path):
-    raise FileNotFoundError(f"{credentials_path} not found.")
 
-credentials = Credentials.from_service_account_file(
-    credentials_path,
-    scopes=scopes
-)
+def credentials(scopes=SCOPES) -> Credentials:  
+    """
+    Obtains and returns Google Sheets API credentials. If valid credentials
+    """
+    if not os.path.exists(credential_path):
+        raise FileNotFoundError(f"{credential_path} not found.")
 
-gc = gspread.authorize(credentials)
+    creds = Credentials.from_service_account_file(
+        credential_path,
+        scopes=scopes
+    )
 
-spreadsheet = gc.open_by_key("1dTgR_RhGPO7P35Ub5QwMP8udApas7sCRWnI_gGGEl6A")
+    return creds
 
-worksheet = spreadsheet.worksheet('bipa')
 
-for line in worksheet.get_all_records():
-    print(line)
+def credentials_authorized(scopes=SCOPES) -> gspread.client.Client:
+    """
+    Obtains and returns Google Sheets API credentials. If valid credentials
+    """
+    creds = credentials(scopes)
+
+    if not creds.valid:
+        creds.refresh(Request())
+
+    return gspread.authorize(creds)

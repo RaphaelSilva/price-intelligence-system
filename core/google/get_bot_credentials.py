@@ -28,19 +28,16 @@ SCOPES = [
 ]
 
 
-def credentials(scopes=SCOPES) -> Credentials:  
-    """
-    Obtains and returns Google Sheets API credentials. If valid credentials
-    """
+def credentials(scopes=SCOPES) -> Credentials:
     if not os.path.exists(credential_path):
         raise FileNotFoundError(f"{credential_path} not found.")
 
-    creds = Credentials.from_service_account_file(
+    credentials = Credentials.from_service_account_file(
         credential_path,
         scopes=scopes
     )
 
-    return creds
+    return credentials
 
 
 def credentials_authorized(scopes=SCOPES) -> gspread.client.Client:

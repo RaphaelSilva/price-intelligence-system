@@ -1,22 +1,22 @@
-"""
-This script uses Playwright to automate browser actions.
-
-Functions:
-    run(playwright: Playwright) -> None:
-        Launches a Chromium browser, navigates to "http://example.com", 
-        performs other actions, and then closes the browser.
-
-Usage:
-    The script initializes Playwright in synchronous mode and calls the `run` function.
-"""
 import re
 
 from playwright.sync_api import Playwright, sync_playwright
 
-from core.google.sheet import add
+from core.google.sheet import add, create
+from core.google.folder import list
 
 
 def run(pw: Playwright) -> None:  # pylint: disable=C0116
+    files = list.folder()
+    if not files:
+        create.new_file("PromoHub")
+    else:
+        for file in files:
+            if file['name'] == "PromoHub":
+                break
+        else:
+            create.folder("PromoHub")
+
     browser = pw.chromium.launch(headless=False)
     context = browser.new_context()
     page = context.new_page()

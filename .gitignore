@@ -76,3 +76,5 @@ cython_debug/
 
 
 credentials/**/*.json
+
+.env

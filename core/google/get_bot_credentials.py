@@ -27,6 +27,8 @@ SCOPES = [
     'https://www.googleapis.com/auth/drive'
 ]
 
+CREDS = None
+
 
 def credentials(scopes=SCOPES) -> Credentials:
     if not os.path.exists(credential_path):
@@ -44,9 +46,10 @@ def credentials_authorized(scopes=SCOPES) -> gspread.client.Client:
     """
     Obtains and returns Google Sheets API credentials. If valid credentials
     """
-    creds = credentials(scopes)
+    global CREDS
+    CREDS = CREDS if CREDS else credentials(scopes)
 
-    if not creds.valid:
-        creds.refresh(Request())
+    if not CREDS.valid:
+        CREDS.refresh(Request())
 
-    return gspread.authorize(creds)
+    return gspread.authorize(CREDS)

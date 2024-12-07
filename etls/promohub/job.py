@@ -2,20 +2,22 @@ import re
 
 from playwright.sync_api import Playwright, sync_playwright
 
-from core.google.sheet import add, create
+from core.google.sheet import add, create, open
 from core.google.folder import list
+
+def create_sheet(file_name: str, sheet_name: str):
+    spreadsheet = create.new_file(file_name, sheet_name)
+    
+    return spreadsheet
 
 
 def run(pw: Playwright) -> None:  # pylint: disable=C0116
-    files = list.folder()
-    if not files:
-        create.new_file("PromoHub")
-    else:
-        for file in files:
-            if file['name'] == "PromoHub":
-                break
-        else:
-            create.folder("PromoHub")
+    file_name = "PromoHub"
+    worksheet_name = "etl"
+
+    files = filter(lambda x: x['name'] == file_name, list.folder())
+    file = next(files, None)
+    spreadsheet = open.sheet(file['id']) if file else create_sheet(file_name, worksheet_name)
 
     browser = pw.chromium.launch(headless=False)
     context = browser.new_context()
@@ -42,7 +44,8 @@ def run(pw: Playwright) -> None:  # pylint: disable=C0116
             'ImageLink': img,
             'Date': '15/10/2024'
         })
-    add.lines(promos, "", "")
+        
+    add.lines(promos, sheet_name=worksheet_name, spreadsheet=spreadsheet)
 
     # ---------------------
     context.close()

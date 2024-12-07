@@ -6,6 +6,10 @@ disable=
     C0116, # missing-function-docstring
     R0903, # too-few-public-methods    
     W1203, # logging-fstring-interpolation
+    W0622, # redefined-builtin
+    W0719, # raising-non-exception
+    W0102, # dangerous-default-value
+    
 
 [test_*]
 disable=
